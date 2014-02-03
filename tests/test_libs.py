@@ -2,7 +2,8 @@
 """
     test_libs
     ~~~~~~~~~~~~~~~
-    
+
+    Libs module tests
 
 """
 from nose.tools import *

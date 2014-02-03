@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-    webapp
+    app
     ~~~~~~~~~~~~~~~
-    
-    
+
+    Main flask app
 """
 import os
 from werkzeug.utils import import_string

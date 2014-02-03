@@ -2,7 +2,8 @@
 """
     test_require_json
     ~~~~~~~~~~~~~~~
-    
+
+    Test for the require_json_decorator
     
 """
 from flask import Flask

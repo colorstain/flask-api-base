@@ -2,7 +2,8 @@
 """
     test_base
     ~~~~~~~~~~~~~~~
-    
+
+    Base class for api based web apps
     
 """
 from nose.tools import *
