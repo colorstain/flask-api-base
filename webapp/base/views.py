@@ -12,3 +12,7 @@ from webapp.lib.api import api_success
 @base.route('/')
 def hello_world():
     return api_success({'msg': 'hello world'})
+
+@base.route('/other')
+def other():
+    pass
