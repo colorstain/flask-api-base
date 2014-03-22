@@ -9,9 +9,9 @@ import os
 from werkzeug.utils import import_string
 from webapp import AppFactory
 
-os.environ.setdefault('ENV', 'Development')
+os.environ.setdefault('ENV', 'development')
 
-settings = import_string('webapp.settings.%sConfig' % os.environ['ENV'])
+settings = import_string('settings.%s' % os.environ['ENV'])
 app = AppFactory(settings).get_app(__name__)
 
 if __name__ == '__main__':
