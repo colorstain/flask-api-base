@@ -10,8 +10,6 @@ from nose.tools import *
 from flask import json
 from werkzeug.utils import cached_property
 
-from webapp.app import app as configured_app
-
 
 class AppBase(object):
 
@@ -22,7 +20,11 @@ class AppBase(object):
 
     @classmethod
     def setup_class(cls):
-        cls._app = cls.selected_app or configured_app
+        if cls.selected_app:
+            cls._app = cls.selected_app
+        else:
+            from webapp.app import app as configured_app
+            cls._app = configured_app
 
     @cached_property
     def app(self):
@@ -104,7 +106,7 @@ class AppBase(object):
         response_json = decode_json(response.data)
         if self.response_check:
             if expect_error is not None:
-                eq_(response.status_code, 400, 'Error: {!r}'.format(response.data))
+                assert_in(response.status_code, (500, 400), 'Error: {!r}'.format(response.data))
                 self._check_errors(response_json, expect_error)
             else:
                 eq_(response.status_code, 200, 'Error: {!r}'.format(response.data))
