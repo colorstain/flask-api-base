@@ -7,7 +7,30 @@
 """
 
 from importlib import import_module
-from flask import Flask
+from flask import Flask as _Flask
+from webapp.lib.api import api_success, error_handler
+from webapp.lib.utils import CustomJSONEncoder
+
+
+class Flask(_Flask):
+    """
+    Custom Flask class that accepts other types of views responses
+    """
+
+    def make_response(self, rv):
+        """
+        Extended version of make_response, in addition to accepting the normal make response
+         types it also accepts None, which gets converted to api_success and a dict that
+         gets json encoded automatically
+
+        :param rv: return value from the view function
+        """
+        if rv is None:
+            rv = api_success()
+        if isinstance(rv, dict):
+            description = rv.pop('description', None)
+            rv = api_success(rv, description)
+        return super(Flask, self).make_response(rv)
 
 
 class AppFactory(object):
@@ -37,6 +60,9 @@ class AppFactory(object):
 
         self._bind_extensions()
         self._register_blueprints()
+        self._customize_encoder()
+        self._add_hooks()
+        self._register_error_handlers()
 
         return self._app
 
@@ -60,3 +86,20 @@ class AppFactory(object):
             else:
                 ext(self._app)
 
+    def _customize_encoder(self):
+        self._app.json_encoder = CustomJSONEncoder
+
+    def _register_error_handlers(self):
+        self._app.errorhandler(Exception)(error_handler)
+
+        for error in range(400, 420) + range(500, 506):
+            self._app.error_handler_spec[None][error] = error_handler
+
+    def _add_hooks(self):
+        for path in self._app.config.get('BEFORE_REQUEST_HOOKS', []):
+            hook = self._get_imports_by_path(path)
+            self._app.before_request(hook)
+
+        for path in self._app.config.get('AFTER_REQUEST_HOOKS', []):
+            hook = self._get_imports_by_path(path)
+            self._app.after_request(hook)
