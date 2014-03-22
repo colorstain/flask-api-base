@@ -16,6 +16,7 @@ from webapp.lib import api
 
 app = Flask(__name__)
 
+
 def test_camel_case_to_underscore():
     eq_(utils.camel_case_to_underscore('TestOne'), 'test_one')
     eq_(utils.camel_case_to_underscore('AnotherOne'), 'another_one')
